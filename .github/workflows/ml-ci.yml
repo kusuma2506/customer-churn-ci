@@ -32,12 +32,15 @@ jobs:
       - name: Install ML dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Verify dataset
+      - name: Verify customer churn dataset
         run: |
-          python -c "from pathlib import Path; p=Path('data/customer_churn.csv.csv'); print('Dataset exists:', p.is_file()); print('Dataset size:', p.stat().st_size if p.is_file() else 'missing'); assert p.is_file(), 'Dataset is missing from the repository'"
+          python -c "from pathlib import Path; p=Path('data/customer_churn.csv.csv'); assert p.is_file(), f'Dataset missing: {p}'; print(f'Dataset found: {p}')"
 
       - name: Train customer churn model
         run: python train_model.py
+
+      - name: Check ML quality gate
+        run: python quality_gate.py
 
       - name: Run automated ML tests
         run: python -m unittest test_ml_pipeline -v
