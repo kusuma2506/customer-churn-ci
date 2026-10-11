@@ -71,7 +71,7 @@ class TestMLPipeline(unittest.TestCase):
         }])
 
         prediction = model.predict(sample)[0]
-        self.assertIn(int(prediction), [0, 1])
+        self.assertIn(int(prediction), [2])
 
 
 if __name__ == "__main__":
