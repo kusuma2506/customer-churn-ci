@@ -47,6 +47,7 @@ jobs:
       - name: Run prediction application tests
         run: python -m unittest test_app.py -v
 
+
       - name: Prepare release candidate
         run: |
           mkdir -p release_candidate
@@ -54,6 +55,8 @@ jobs:
           cp customer_churn_model.pkl release_candidate/
           cp metrics.json release_candidate/
           cp requirements.txt release_candidate/
+          cp Dockerfile release_candidate/
+          cp .dockerignore release_candidate/
           printf '%s\n' \
             "Customer Churn Prediction Application" \
             "Start: python app.py" \
@@ -69,3 +72,4 @@ jobs:
           path: release_candidate/
           if-no-files-found: error
           retention-days: 7
+
