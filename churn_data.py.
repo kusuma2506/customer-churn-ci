@@ -1,0 +1,77 @@
+import csv
+from pathlib import Path
+
+REQUIRED_COLUMNS = {
+    "CustomerID",
+    "Age",
+    "Gender",
+    "Tenure",
+    "Usage Frequency",
+    "Support Calls",
+    "Payment Delay",
+    "Subscription Type",
+    "Contract Length",
+    "Total Spend",
+    "Last Interaction",
+    "Churn",
+}
+
+VALID_CHURN_LABELS = {"0", "1", "0.0", "1.0"}
+
+
+def validate_dataset(file_path):
+    errors = []
+    path = Path(file_path)
+
+    if not path.exists():
+        return [f"File not found: {path}"]
+
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
+        reader = csv.DictReader(file)
+
+        if not reader.fieldnames:
+            return ["CSV has no header row"]
+
+        missing = REQUIRED_COLUMNS - set(reader.fieldnames)
+
+        if missing:
+            return [f"Missing columns: {sorted(missing)}"]
+
+        row_count = 0
+
+        for line_number, row in enumerate(reader, start=2):
+
+            # Ignore completely blank rows
+            if all(
+                value is None or not value.strip()
+                for value in row.values()
+            ):
+                continue
+
+            row_count += 1
+            churn = (row.get("Churn") or "").strip()
+
+            if churn not in VALID_CHURN_LABELS:
+                errors.append(
+                    f"Line {line_number}: Invalid Churn value: {churn!r}"
+                )
+
+                if len(errors) >= 20:
+                    break
+
+        if row_count == 0:
+            errors.append("Dataset contains no customer records")
+
+    return errors
+
+
+if __name__ == "__main__":
+    problems = validate_dataset("data/customer_churn.csv")
+
+    if problems:
+        print("DATA VALIDATION FAILED")
+
+        for problem in problems:
+            print(problem)
+    else:
+        print("DATA VALIDATION PASSED")
