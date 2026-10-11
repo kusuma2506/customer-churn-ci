@@ -1,5 +1,4 @@
-
-name: Customer Churn ML CI
+name: Customer Churn ML CI-CD
 
 on:
   push:
@@ -14,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  train-and-test:
+  train-test-deliver:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +28,7 @@ jobs:
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
 
-      - name: Install ML dependencies
+      - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
       - name: Verify customer churn dataset
@@ -45,12 +44,28 @@ jobs:
       - name: Run automated ML tests
         run: python -m unittest test_ml_pipeline -v
 
-      - name: Upload validated ML artifacts
+      - name: Run prediction application tests
+        run: python -m unittest test_app.py -v
+
+      - name: Prepare release candidate
+        run: |
+          mkdir -p release_candidate
+          cp app.py release_candidate/
+          cp customer_churn_model.pkl release_candidate/
+          cp metrics.json release_candidate/
+          cp requirements.txt release_candidate/
+          printf '%s\n' \
+            "Customer Churn Prediction Application" \
+            "Start: python app.py" \
+            "Health endpoint: GET /" \
+            "Prediction endpoint: POST /predict" \
+            "Prediction classes: CHURN or NO_CHURN" \
+            > release_candidate/DEPLOYMENT.txt
+
+      - name: Upload release candidate
         uses: actions/upload-artifact@v4
         with:
-          name: customer-churn-ml-artifacts
-          path: |
-            customer_churn_model.pkl
-            metrics.json
+          name: customer-churn-ml-release
+          path: release_candidate/
           if-no-files-found: error
           retention-days: 7
