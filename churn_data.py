@@ -16,8 +16,7 @@ REQUIRED_COLUMNS = {
     "Churn",
 }
 
-VALID_CHURN_LABELS = {"0"}
-
+VALID_CHURN_LABELS = {"0", "1", "0.0", "1.0"}
 
 def validate_dataset(file_path):
     errors = []
