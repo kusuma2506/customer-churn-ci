@@ -44,3 +44,13 @@ jobs:
 
       - name: Run automated ML tests
         run: python -m unittest test_ml_pipeline -v
+
+      - name: Upload validated ML artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: customer-churn-ml-artifacts
+          path: |
+            customer_churn_model.pkl
+            metrics.json
+          if-no-files-found: error
+          retention-days: 7
