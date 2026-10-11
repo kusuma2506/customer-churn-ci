@@ -49,8 +49,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: customer-churn-ml-artifacts
-          path: |
-            customer_churn_model_missing.pkl
-            metrics.json
+          path: customer_churn_model_missing.pkl
           if-no-files-found: error
           retention-days: 7
