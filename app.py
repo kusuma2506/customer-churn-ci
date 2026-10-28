@@ -38,6 +38,9 @@ def health_check():
         "status": "ok",
         "service": "customer-churn-prediction",
     })
+@app.get("/health")
+def health():
+    return jsonify({"status": "healthy"}), 200
 @app.route("/health")
 def health():
     return {"status": "healthy"}, 200
