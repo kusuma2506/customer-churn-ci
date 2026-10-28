@@ -41,9 +41,6 @@ def health_check():
 @app.get("/health")
 def health():
     return jsonify({"status": "healthy"}), 200
-@app.route("/health")
-def health():
-    return {"status": "healthy"}, 200
 
 @app.post("/predict")
 def predict():
