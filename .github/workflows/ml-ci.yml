@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   train-test-deliver:
@@ -115,6 +116,9 @@ jobs:
         if: always()
         run: docker logs customer-churn-container || true
 
+      - name: Stop and remove Docker container
+        if: always()
+        run: docker rm -f customer-churn-container || true
       - name: Stop and remove Docker container
         if: always()
         run: docker rm -f customer-churn-container || true
