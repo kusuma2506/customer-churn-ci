@@ -38,7 +38,7 @@ def health_check():
         "status": "ok",
         "service": "customer-churn-prediction",
     })
-@app.route("/health", methods=["GET"])
+@app.route("/health")
 def health():
     return {"status": "healthy"}, 200
 
